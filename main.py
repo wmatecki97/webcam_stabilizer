@@ -16,6 +16,17 @@ def main():
     eye_cascade = cv2.CascadeClassifier(eye_cascade_path)
     nose_cascade = cv2.CascadeClassifier(nose_cascade_path)
 
+    # Check if the cascades were loaded successfully
+    if face_cascade.empty():
+        print(f"Error: Could not load face cascade file at {face_cascade_path}")
+        return
+    if eye_cascade.empty():
+        print(f"Error: Could not load eye cascade file at {eye_cascade_path}")
+        return
+    if nose_cascade.empty():
+        print(f"Error: Could not load nose cascade file at {nose_cascade_path}")
+        return
+
     # Open the OBS virtual camera
     cap = cv2.VideoCapture(0)  # You might need to change the index (0, 1, 2, etc.)
 
