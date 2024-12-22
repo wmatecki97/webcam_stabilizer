@@ -6,10 +6,11 @@ from face_detection import FaceAligner
 import logging
 import time
 
-# Configure logging
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-
 def main():
+    # Configure logging
+    logging_level = logging.DEBUG
+    logging.basicConfig(level=logging_level, format='%(asctime)s - %(levelname)s - %(message)s')
+
     # Open the default camera
     cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
     if not cap.isOpened():
@@ -29,7 +30,10 @@ def main():
 
     logging.info(f"Camera opened with dimensions: {frame_width}x{frame_height} and fps: {fps}")
 
-    face_aligner = FaceAligner()
+    # Anomaly detection configuration
+    max_eye_distance = 100
+
+    face_aligner = FaceAligner(max_eye_distance=max_eye_distance, logging_level=logging_level)
     
     # Fixed output dimensions
     output_width = 1280
