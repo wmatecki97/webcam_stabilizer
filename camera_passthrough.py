@@ -44,12 +44,6 @@ def main():
     cam = pyvirtualcam.Camera(width=output_width, height=output_height, fps=fps)
     logging.info(f"Virtual camera started: {cam.device} with dimensions: {output_width}x{output_height}")
     
-    # Frame buffer and timer for video saving
-    frame_buffer = []
-    start_time_video = time.time()
-    video_duration = 10  # seconds
-    video_counter = 1
-
     try:
         while True:
             start_time = time.time()
@@ -63,12 +57,6 @@ def main():
             # Resize the frame to 640x480
             frame = cv2.resize(frame, (640, 480))
             logging.debug("Frame resized to 640x480.")
-            
-            # Create a copy of the frame for the video buffer
-            frame_copy = frame.copy()
-            
-            # Add frame copy and timestamp to buffer
-            frame_buffer.append((frame_copy, time.time()))
 
             # Detect, align the frame
             aligned_frame, _, _ = face_aligner.detect_and_align(frame)
@@ -87,34 +75,6 @@ def main():
             cam.sleep_until_next_frame()
             logging.debug("Frame sent to virtual camera.")
             
-
-            # Check if it's time to save the video
-            if time.time() - start_time_video >= video_duration:
-                try:
-                    video_filename = f"output_video_{video_counter}.mp4"
-                    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-                    height, width, _ = frame_buffer[0][0].shape
-                    
-                    # Calculate expected number of frames
-                    expected_frames = int(fps * video_duration)
-                    
-                    # Duplicate frames if needed
-                    while len(frame_buffer) < expected_frames and frame_buffer:
-                        frame_buffer.append(frame_buffer[-1])
-
-                    video_writer = cv2.VideoWriter(video_filename, fourcc, fps, (width, height))
-                    for buffered_frame, _ in frame_buffer:
-                        video_writer.write(buffered_frame)
-                    video_writer.release()
-                    logging.info(f"Video saved to {video_filename}")
-                    video_counter += 1
-                except Exception as e:
-                    logging.error(f"Error saving video: {e}")
-                finally:
-                    # Clear the buffer and reset the timer
-                    frame_buffer = []
-                    start_time_video = time.time()
-
             elapsed_time = time.time() - start_time
             sleep_time = max(0, (1/fps) - elapsed_time)
             time.sleep(sleep_time)
