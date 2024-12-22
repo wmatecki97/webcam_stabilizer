@@ -49,6 +49,10 @@ def main():
                 break
             logging.debug("Frame captured from camera.")
 
+            # Resize the frame to 640x480
+            frame = cv2.resize(frame, (640, 480))
+            logging.debug("Frame resized to 640x480.")
+
             # Detect, align the frame
             aligned_frame, _, _ = face_aligner.detect_and_align(frame)
             logging.debug("Face detection and alignment complete.")
