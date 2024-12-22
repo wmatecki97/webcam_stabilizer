@@ -7,13 +7,9 @@ import logging
 import time
 import os
 
-def main():
-    # Configure logging
-    logging_level = logging.DEBUG
-    logging.basicConfig(level=logging_level, format='%(asctime)s - %(levelname)s - %(message)s')
-
+def run_camera(config):
     # Open the default camera
-    cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+    cap = cv2.VideoCapture(config.camera_index, config.camera_api)
     if not cap.isOpened():
         logging.error("Error: Could not open camera.")
         return
@@ -25,20 +21,20 @@ def main():
     if fps == 0:
         fps = 30 # Set default fps if camera doesn't provide it
     
-    max_fps = 30
+    max_fps = config.max_fps
     if fps > max_fps:
         fps = max_fps
 
     logging.info(f"Camera opened with dimensions: {frame_width}x{frame_height} and fps: {fps}")
 
     # Anomaly detection configuration
-    max_eye_distance = 30
+    max_eye_distance = config.max_eye_distance
 
-    face_aligner = FaceAligner(max_eye_distance=max_eye_distance, logging_level=logging_level)
+    face_aligner = FaceAligner(max_eye_distance=max_eye_distance, logging_level=config.logging_level)
     
     # Fixed output dimensions
-    output_width = 1280
-    output_height = 720
+    output_width = config.output_width
+    output_height = config.output_height
 
     # Create a virtual camera with the fixed dimensions
     cam = pyvirtualcam.Camera(width=output_width, height=output_height, fps=fps)
@@ -94,6 +90,3 @@ def main():
             cam.close()
             logging.info("Virtual camera closed.")
         cv2.destroyAllWindows()
-
-if __name__ == "__main__":
-    main()
