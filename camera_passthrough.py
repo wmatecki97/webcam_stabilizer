@@ -7,11 +7,11 @@ import logging
 import time
 
 # Configure logging
-logging.basicConfig(level=logging.CRITICAL, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=None, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def main():
     # Open the default camera
-    cap = cv2.VideoCapture(1)
+    cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
     if not cap.isOpened():
         logging.error("Error: Could not open camera.")
         return
