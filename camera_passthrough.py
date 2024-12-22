@@ -4,9 +4,10 @@ import numpy as np
 from image_processing import process_frame
 from face_detection import FaceAligner
 import logging
+import time
 
 # Configure logging
-logging.basicConfig(level=None, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.CRITICAL, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def main():
     # Open the default camera
@@ -21,6 +22,10 @@ def main():
     fps = cap.get(cv2.CAP_PROP_FPS)
     if fps == 0:
         fps = 30 # Set default fps if camera doesn't provide it
+    
+    max_fps = 30
+    if fps > max_fps:
+        fps = max_fps
 
     logging.info(f"Camera opened with dimensions: {frame_width}x{frame_height} and fps: {fps}")
 
@@ -36,6 +41,7 @@ def main():
     
     try:
         while True:
+            start_time = time.time()
             # Read a frame from the camera
             ret, frame = cap.read()
             if not ret:
@@ -55,6 +61,10 @@ def main():
             cam.send(frame_rgb)
             cam.sleep_until_next_frame()
             logging.debug("Frame sent to virtual camera.")
+            
+            elapsed_time = time.time() - start_time
+            sleep_time = max(0, (1/fps) - elapsed_time)
+            time.sleep(sleep_time)
 
             # Break the loop if 'q' is pressed
             if cv2.waitKey(1) & 0xFF == ord('q'):
