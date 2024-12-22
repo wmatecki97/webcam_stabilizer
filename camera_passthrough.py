@@ -38,7 +38,10 @@ def main():
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
     except VirtualCameraException as e:
-        print(f"Error creating virtual camera: {e}")
+        print(f"Virtual camera error: {e}")
+        raise # Re-raise the VirtualCameraException
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
 
     # Release the camera and destroy all windows
     cap.release()
