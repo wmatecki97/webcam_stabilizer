@@ -9,7 +9,9 @@ class FaceAligner:
     def __init__(self):
         self.face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
         self.eye_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xml')
-        self.prev_left_eye_center = None
+        self.first_left_eye_center = None
+        self.prev_aligned_frame = None
+        self.first_frame_processed = False
         logging.info("FaceAligner initialized.")
 
     def detect_and_align(self, frame):
@@ -18,7 +20,10 @@ class FaceAligner:
         
         if len(faces) == 0:
             logging.debug("No faces detected.")
-            return frame, frame.shape[1], frame.shape[0]
+            if self.prev_aligned_frame is not None:
+                return self.prev_aligned_frame, frame.shape[1], frame.shape[0]
+            else:
+                return frame, frame.shape[1], frame.shape[0]
 
         logging.debug(f"Detected {len(faces)} faces.")
         x, y, w, h = faces[0]
@@ -43,21 +48,25 @@ class FaceAligner:
             logging.debug(f"Left eye center: {left_eye_center}")
 
         aligned_frame = frame
-        if self.prev_left_eye_center is not None and left_eye_center is not None:
-            # Calculate the translation vector
-            tx = self.prev_left_eye_center[0] - left_eye_center[0]
-            ty = self.prev_left_eye_center[1] - left_eye_center[1]
+        if self.first_frame_processed:
+            if self.first_left_eye_center is not None and left_eye_center is not None:
+                # Calculate the translation vector
+                tx = self.first_left_eye_center[0] - left_eye_center[0]
+                ty = self.first_left_eye_center[1] - left_eye_center[1]
 
-            # Create the translation matrix
-            translation_matrix = np.float32([[1, 0, tx], [0, 1, ty]])
+                # Create the translation matrix
+                translation_matrix = np.float32([[1, 0, tx], [0, 1, ty]])
 
-            # Apply the translation to the frame
-            aligned_frame = cv2.warpAffine(frame, translation_matrix, (frame.shape[1], frame.shape[0]))
-            logging.debug(f"Frame aligned with translation: {tx}, {ty}")
+                # Apply the translation to the frame
+                aligned_frame = cv2.warpAffine(frame, translation_matrix, (frame.shape[1], frame.shape[0]))
+                logging.debug(f"Frame aligned with translation: {tx}, {ty}")
+            elif self.prev_aligned_frame is not None:
+                aligned_frame = self.prev_aligned_frame
+        else:
+            if left_eye_center is not None:
+                self.first_left_eye_center = left_eye_center
+                logging.debug(f"First left eye center set: {self.first_left_eye_center}")
+            self.first_frame_processed = True
 
-        # Update previous left eye position
-        if left_eye_center is not None:
-            self.prev_left_eye_center = left_eye_center
-            logging.debug(f"Previous left eye center updated: {self.prev_left_eye_center}")
-
+        self.prev_aligned_frame = aligned_frame
         return aligned_frame, frame.shape[1], frame.shape[0]
