@@ -5,6 +5,7 @@ from image_processing import process_frame
 from face_detection import FaceAligner
 import logging
 import time
+import os
 
 def main():
     # Configure logging
@@ -43,6 +44,12 @@ def main():
     cam = pyvirtualcam.Camera(width=output_width, height=output_height, fps=fps)
     logging.info(f"Virtual camera started: {cam.device} with dimensions: {output_width}x{output_height}")
     
+    # Frame buffer and timer for video saving
+    frame_buffer = []
+    start_time_video = time.time()
+    video_duration = 10  # seconds
+    video_counter = 1
+
     try:
         while True:
             start_time = time.time()
@@ -74,6 +81,28 @@ def main():
             cam.sleep_until_next_frame()
             logging.debug("Frame sent to virtual camera.")
             
+            # Add frame to buffer
+            frame_buffer.append(frame_resized)
+
+            # Check if it's time to save the video
+            if time.time() - start_time_video >= video_duration:
+                try:
+                    video_filename = f"output_video_{video_counter}.mp4"
+                    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+                    height, width, _ = frame_buffer[0].shape
+                    video_writer = cv2.VideoWriter(video_filename, fourcc, fps, (width, height))
+                    for buffered_frame in frame_buffer:
+                        video_writer.write(buffered_frame)
+                    video_writer.release()
+                    logging.info(f"Video saved to {video_filename}")
+                    video_counter += 1
+                except Exception as e:
+                    logging.error(f"Error saving video: {e}")
+                finally:
+                    # Clear the buffer and reset the timer
+                    frame_buffer = []
+                    start_time_video = time.time()
+
             elapsed_time = time.time() - start_time
             sleep_time = max(0, (1/fps) - elapsed_time)
             time.sleep(sleep_time)
