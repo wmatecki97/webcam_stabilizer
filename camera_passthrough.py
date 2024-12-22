@@ -2,6 +2,7 @@ import cv2
 import pyvirtualcam
 import numpy as np
 from image_processing import process_frame
+from face_detection import FaceAligner
 
 def main():
     # Open the default camera
@@ -17,6 +18,8 @@ def main():
     if fps == 0:
         fps = 30 # Set default fps if camera doesn't provide it
 
+    face_aligner = FaceAligner()
+
     # Create a virtual camera
     try:
         # Initialize with dummy values, will be updated after first frame
@@ -27,8 +30,11 @@ def main():
             if not ret:
                 break
 
-            # Process the frame
-            frame_rgb, cropped_width, cropped_height = process_frame(frame)
+            # Detect, align and crop the frame
+            aligned_frame, cropped_width, cropped_height = face_aligner.detect_and_align(frame)
+
+            # Process the frame (convert to RGB)
+            frame_rgb = process_frame(aligned_frame)
 
             # Initialize the virtual camera with the correct dimensions
             if cam is None:
