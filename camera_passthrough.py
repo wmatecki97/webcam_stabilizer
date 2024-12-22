@@ -36,7 +36,7 @@ def main():
                 # Break the loop if 'q' is pressed
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
-    except pyvirtualcam.PyVirtualCamException as e:
+    except pyvirtualcam.VirtualCameraException as e:
         print(f"Error creating virtual camera: {e}")
 
     # Release the camera and destroy all windows
