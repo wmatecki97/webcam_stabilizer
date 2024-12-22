@@ -1,7 +1,6 @@
 import cv2
 import pyvirtualcam
 import numpy as np
-from pyvirtualcam.exceptions import VirtualCameraException
 
 def main():
     # Open the default camera
@@ -37,7 +36,7 @@ def main():
                 # Break the loop if 'q' is pressed
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
-    except VirtualCameraException as e:
+    except pyvirtualcam.exceptions.VirtualCameraException as e:
         print(f"Virtual camera error: {e}")
         raise # Re-raise the VirtualCameraException
     except Exception as e:
