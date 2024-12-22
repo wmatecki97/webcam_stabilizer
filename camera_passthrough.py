@@ -63,6 +63,12 @@ def main():
             # Resize the frame to 640x480
             frame = cv2.resize(frame, (640, 480))
             logging.debug("Frame resized to 640x480.")
+            
+            # Create a copy of the frame for the video buffer
+            frame_copy = frame.copy()
+            
+            # Add frame copy to buffer
+            frame_buffer.append(frame_copy)
 
             # Detect, align the frame
             aligned_frame, _, _ = face_aligner.detect_and_align(frame)
@@ -81,8 +87,6 @@ def main():
             cam.sleep_until_next_frame()
             logging.debug("Frame sent to virtual camera.")
             
-            # Add frame to buffer
-            frame_buffer.append(frame_resized)
 
             # Check if it's time to save the video
             if time.time() - start_time_video >= video_duration:
