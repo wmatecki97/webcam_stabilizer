@@ -1,6 +1,7 @@
 import cv2
 import pyvirtualcam
 import numpy as np
+from image_processing import process_frame
 
 def main():
     # Open the default camera
@@ -26,8 +27,8 @@ def main():
                 if not ret:
                     break
 
-                # Convert the frame to RGB
-                frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                # Process the frame
+                frame_rgb = process_frame(frame)
 
                 # Send the frame to the virtual camera
                 cam.send(frame_rgb)
