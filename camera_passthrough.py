@@ -41,10 +41,9 @@ def main():
             # Re-initialize the virtual camera with the correct dimensions after the first frame
             if first_frame:
                 first_frame = False
-                if cam.width != cropped_width or cam.height != cropped_height:
-                    cam.close()
-                    cam = pyvirtualcam.Camera(width=cropped_width, height=cropped_height, fps=fps)
-                    print(f"Virtual camera re-initialized: {cam.device}")
+                cam.close()
+                cam = pyvirtualcam.Camera(width=cropped_width, height=cropped_height, fps=fps)
+                print(f"Virtual camera re-initialized: {cam.device}")
 
             # Send the frame to the virtual camera
             cam.send(frame_rgb)
