@@ -36,9 +36,6 @@ def main():
                 # Break the loop if 'q' is pressed
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
-    except pyvirtualcam.exceptions.VirtualCameraException as e:
-        print(f"Virtual camera error: {e}")
-        raise # Re-raise the VirtualCameraException
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
 
