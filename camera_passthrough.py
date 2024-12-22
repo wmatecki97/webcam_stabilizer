@@ -6,11 +6,11 @@ from face_detection import FaceAligner
 import logging
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=None, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def main():
     # Open the default camera
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(1)
     if not cap.isOpened():
         logging.error("Error: Could not open camera.")
         return
