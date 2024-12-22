@@ -1,4 +1,5 @@
 import logging
+import cv2
 
 class Config:
     def __init__(self):
