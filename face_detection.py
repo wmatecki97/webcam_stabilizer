@@ -3,14 +3,14 @@ import numpy as np
 import logging
 
 class FaceAligner:
-    def __init__(self, max_eye_distance=100, logging_level=logging.DEBUG):
+    def __init__(self, max_eye_movement_threshold=100, logging_level=logging.DEBUG):
         self.face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
         self.eye_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xml')
         self.first_left_eye_center = None
         self.prev_aligned_frame = None
         self.first_frame_processed = False
         self.prev_translation_matrix = None
-        self.max_eye_distance = max_eye_distance
+        self.max_eye_movement_threshold = max_eye_movement_threshold
         self.prev_left_eye_center = None
         
         logging.basicConfig(level=logging_level, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -58,8 +58,8 @@ class FaceAligner:
                 
                 if self.prev_left_eye_center is not None:
                     distance = np.sqrt((left_eye_center[0] - self.prev_left_eye_center[0])**2 + (left_eye_center[1] - self.prev_left_eye_center[1])**2)
-                    if distance > self.max_eye_distance:
-                        logging.warning(f"Eye movement distance {distance:.2f} exceeds threshold {self.max_eye_distance}. Ignoring frame.")
+                    if distance > self.max_eye_movement_threshold:
+                        logging.warning(f"Eye movement distance {distance:.2f} exceeds threshold {self.max_eye_movement_threshold}. Ignoring frame.")
                         if self.prev_aligned_frame is not None:
                             aligned_frame = self.prev_aligned_frame
                         return aligned_frame, frame.shape[1], frame.shape[0]
