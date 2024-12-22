@@ -12,18 +12,23 @@ class FaceAligner:
         self.first_left_eye_center = None
         self.prev_aligned_frame = None
         self.first_frame_processed = False
+        self.prev_translation_matrix = None
         logging.info("FaceAligner initialized.")
 
     def detect_and_align(self, frame):
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         faces = self.face_cascade.detectMultiScale(gray, 1.1, 4)
         
+        aligned_frame = frame
         if len(faces) == 0:
             logging.debug("No faces detected.")
-            if self.prev_aligned_frame is not None:
-                return self.prev_aligned_frame, frame.shape[1], frame.shape[0]
-            else:
-                return frame, frame.shape[1], frame.shape[0]
+            if self.prev_translation_matrix is not None:
+                # Apply previous translation if available
+                aligned_frame = cv2.warpAffine(frame, self.prev_translation_matrix, (frame.shape[1], frame.shape[0]))
+                logging.debug("Applying previous translation.")
+            elif self.prev_aligned_frame is not None:
+                aligned_frame = self.prev_aligned_frame
+            return aligned_frame, frame.shape[1], frame.shape[0]
 
         logging.debug(f"Detected {len(faces)} faces.")
         x, y, w, h = faces[0]
@@ -47,7 +52,6 @@ class FaceAligner:
             left_eye_center = (x + left_eye_x + left_eye_w // 2, y + left_eye_y + left_eye_h // 2)
             logging.debug(f"Left eye center: {left_eye_center}")
 
-        aligned_frame = frame
         if self.first_frame_processed:
             if self.first_left_eye_center is not None and left_eye_center is not None:
                 # Calculate the translation vector
@@ -60,6 +64,7 @@ class FaceAligner:
                 # Apply the translation to the frame
                 aligned_frame = cv2.warpAffine(frame, translation_matrix, (frame.shape[1], frame.shape[0]))
                 logging.debug(f"Frame aligned with translation: {tx}, {ty}")
+                self.prev_translation_matrix = translation_matrix
             elif self.prev_aligned_frame is not None:
                 aligned_frame = self.prev_aligned_frame
         else:
