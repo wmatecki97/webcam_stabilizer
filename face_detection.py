@@ -60,13 +60,4 @@ class FaceAligner:
             self.prev_left_eye_center = left_eye_center
             logging.debug(f"Previous left eye center updated: {self.prev_left_eye_center}")
 
-        # Calculate crop after alignment
-        height, width = aligned_frame.shape[:2]
-        crop_x = int(width * 0.1)
-        crop_y = int(height * 0.1)
-
-        # Crop the frame
-        cropped_frame = aligned_frame[crop_y:height-crop_y, crop_x:width-crop_x]
-        logging.debug(f"Frame cropped to dimensions: {cropped_frame.shape[1]}x{cropped_frame.shape[0]}")
-
-        return cropped_frame, cropped_frame.shape[1], cropped_frame.shape[0]
+        return aligned_frame, frame.shape[1], frame.shape[0]

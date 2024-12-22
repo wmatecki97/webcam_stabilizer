@@ -26,17 +26,13 @@ def main():
 
     face_aligner = FaceAligner()
     
-    # Detect, align and crop the frame
-    ret, frame = cap.read()
-    if not ret:
-        logging.error("Error: Could not read initial frame from camera.")
-        return
-    aligned_frame, cropped_width, cropped_height = face_aligner.detect_and_align(frame)
-    logging.debug(f"Initial face detection and alignment complete. Cropped dimensions: {cropped_width}x{cropped_height}")
+    # Fixed output dimensions
+    output_width = 1280
+    output_height = 720
 
-    # Create a virtual camera with the cropped dimensions
-    cam = pyvirtualcam.Camera(width=cropped_width, height=cropped_height, fps=fps)
-    logging.info(f"Virtual camera started: {cam.device} with dimensions: {cropped_width}x{cropped_height}")
+    # Create a virtual camera with the fixed dimensions
+    cam = pyvirtualcam.Camera(width=output_width, height=output_height, fps=fps)
+    logging.info(f"Virtual camera started: {cam.device} with dimensions: {output_width}x{output_height}")
     
     try:
         while True:
@@ -47,9 +43,9 @@ def main():
                 break
             logging.debug("Frame captured from camera.")
 
-            # Detect, align and crop the frame
-            aligned_frame, cropped_width, cropped_height = face_aligner.detect_and_align(frame)
-            logging.debug(f"Face detection and alignment complete. Cropped dimensions: {cropped_width}x{cropped_height}")
+            # Detect, align the frame
+            aligned_frame, _, _ = face_aligner.detect_and_align(frame)
+            logging.debug("Face detection and alignment complete.")
 
             # Process the frame (convert to RGB)
             frame_rgb = process_frame(aligned_frame)
