@@ -67,8 +67,8 @@ def main():
             # Create a copy of the frame for the video buffer
             frame_copy = frame.copy()
             
-            # Add frame copy to buffer
-            frame_buffer.append(frame_copy)
+            # Add frame copy and timestamp to buffer
+            frame_buffer.append((frame_copy, time.time()))
 
             # Detect, align the frame
             aligned_frame, _, _ = face_aligner.detect_and_align(frame)
@@ -93,9 +93,17 @@ def main():
                 try:
                     video_filename = f"output_video_{video_counter}.mp4"
                     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-                    height, width, _ = frame_buffer[0].shape
+                    height, width, _ = frame_buffer[0][0].shape
+                    
+                    # Calculate expected number of frames
+                    expected_frames = int(fps * video_duration)
+                    
+                    # Duplicate frames if needed
+                    while len(frame_buffer) < expected_frames and frame_buffer:
+                        frame_buffer.append(frame_buffer[-1])
+
                     video_writer = cv2.VideoWriter(video_filename, fourcc, fps, (width, height))
-                    for buffered_frame in frame_buffer:
+                    for buffered_frame, _ in frame_buffer:
                         video_writer.write(buffered_frame)
                     video_writer.release()
                     logging.info(f"Video saved to {video_filename}")
