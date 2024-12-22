@@ -29,11 +29,8 @@ def main():
                 # Convert the frame to RGB
                 frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-                # Flip the frame vertically
-                frame_flipped = cv2.flip(frame_rgb, 0)
-
                 # Send the frame to the virtual camera
-                cam.send(frame_flipped)
+                cam.send(frame_rgb)
                 cam.sleep_until_next_frame()
 
                 # Break the loop if 'q' is pressed
