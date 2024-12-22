@@ -31,7 +31,7 @@ def main():
     logging.info(f"Camera opened with dimensions: {frame_width}x{frame_height} and fps: {fps}")
 
     # Anomaly detection configuration
-    max_eye_distance = 100
+    max_eye_distance = 30
 
     face_aligner = FaceAligner(max_eye_distance=max_eye_distance, logging_level=logging_level)
     
