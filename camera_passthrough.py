@@ -26,33 +26,19 @@ def main():
 
     face_aligner = FaceAligner()
     
-    # Read a frame from the camera
-    ret, frame = cap.read()
-    if not ret:
-        logging.error("Error: Could not read initial frame from camera.")
-        return
-    logging.debug("Initial frame captured from camera.")
+    # Calculate the initial cropped dimensions
+    crop_x = int(frame_width * 0.1)
+    crop_y = int(frame_height * 0.1)
+    cropped_width = frame_width - 2 * crop_x
+    cropped_height = frame_height - 2 * crop_y
 
-    # Detect, align and crop the frame
-    aligned_frame, cropped_width, cropped_height = face_aligner.detect_and_align(frame)
-    logging.debug(f"Face detection and alignment complete. Cropped dimensions: {cropped_width}x{cropped_height}")
-
-    # Create a virtual camera with cropped dimensions
+    # Create a virtual camera with the calculated cropped dimensions
     cam = pyvirtualcam.Camera(width=cropped_width, height=cropped_height, fps=fps)
     logging.info(f"Virtual camera started: {cam.device} with dimensions: {cropped_width}x{cropped_height}")
     
     try:
         while True:
-            # Process the frame (convert to RGB)
-            frame_rgb = process_frame(aligned_frame)
-            logging.debug("Frame processed (converted to RGB).")
-
-            # Send the frame to the virtual camera
-            cam.send(frame_rgb)
-            cam.sleep_until_next_frame()
-            logging.debug("Frame sent to virtual camera.")
-
-            # Read a new frame from the camera
+            # Read a frame from the camera
             ret, frame = cap.read()
             if not ret:
                 logging.error("Error: Could not read frame from camera.")
@@ -62,6 +48,15 @@ def main():
             # Detect, align and crop the frame
             aligned_frame, cropped_width, cropped_height = face_aligner.detect_and_align(frame)
             logging.debug(f"Face detection and alignment complete. Cropped dimensions: {cropped_width}x{cropped_height}")
+
+            # Process the frame (convert to RGB)
+            frame_rgb = process_frame(aligned_frame)
+            logging.debug("Frame processed (converted to RGB).")
+
+            # Send the frame to the virtual camera
+            cam.send(frame_rgb)
+            cam.sleep_until_next_frame()
+            logging.debug("Frame sent to virtual camera.")
 
             # Break the loop if 'q' is pressed
             if cv2.waitKey(1) & 0xFF == ord('q'):
