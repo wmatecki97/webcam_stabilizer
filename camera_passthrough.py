@@ -7,7 +7,7 @@ import logging
 import time
 
 # Configure logging
-logging.basicConfig(level=None, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def main():
     # Open the default camera
