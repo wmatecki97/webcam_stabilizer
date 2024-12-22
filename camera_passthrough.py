@@ -20,10 +20,12 @@ def main():
 
     face_aligner = FaceAligner()
 
-    # Create a virtual camera
+    # Create a virtual camera with original dimensions
+    cam = pyvirtualcam.Camera(width=frame_width, height=frame_height, fps=fps)
+    print(f"Virtual camera started: {cam.device}")
+    
+    first_frame = True
     try:
-        # Initialize with dummy values, will be updated after first frame
-        cam = None
         while True:
             # Read a frame from the camera
             ret, frame = cap.read()
@@ -36,10 +38,13 @@ def main():
             # Process the frame (convert to RGB)
             frame_rgb = process_frame(aligned_frame)
 
-            # Initialize the virtual camera with the correct dimensions
-            if cam is None:
-                cam = pyvirtualcam.Camera(width=cropped_width, height=cropped_height, fps=fps)
-                print(f"Virtual camera started: {cam.device}")
+            # Re-initialize the virtual camera with the correct dimensions after the first frame
+            if first_frame:
+                first_frame = False
+                if cam.width != cropped_width or cam.height != cropped_height:
+                    cam.close()
+                    cam = pyvirtualcam.Camera(width=cropped_width, height=cropped_height, fps=fps)
+                    print(f"Virtual camera re-initialized: {cam.device}")
 
             # Send the frame to the virtual camera
             cam.send(frame_rgb)
