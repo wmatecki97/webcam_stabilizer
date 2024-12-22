@@ -26,13 +26,15 @@ def main():
 
     face_aligner = FaceAligner()
     
-    # Calculate the initial cropped dimensions
-    crop_x = int(frame_width * 0.1)
-    crop_y = int(frame_height * 0.1)
-    cropped_width = frame_width - 2 * crop_x
-    cropped_height = frame_height - 2 * crop_y
+    # Detect, align and crop the frame
+    ret, frame = cap.read()
+    if not ret:
+        logging.error("Error: Could not read initial frame from camera.")
+        return
+    aligned_frame, cropped_width, cropped_height = face_aligner.detect_and_align(frame)
+    logging.debug(f"Initial face detection and alignment complete. Cropped dimensions: {cropped_width}x{cropped_height}")
 
-    # Create a virtual camera with the calculated cropped dimensions
+    # Create a virtual camera with the cropped dimensions
     cam = pyvirtualcam.Camera(width=cropped_width, height=cropped_height, fps=fps)
     logging.info(f"Virtual camera started: {cam.device} with dimensions: {cropped_width}x{cropped_height}")
     
