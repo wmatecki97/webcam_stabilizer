@@ -61,8 +61,12 @@ def main():
             frame_rgb = process_frame(aligned_frame)
             logging.debug("Frame processed (converted to RGB).")
 
+            # Resize the processed frame to the virtual camera's dimensions
+            frame_resized = cv2.resize(frame_rgb, (output_width, output_height))
+            logging.debug(f"Frame resized to virtual camera dimensions: {output_width}x{output_height}")
+
             # Send the frame to the virtual camera
-            cam.send(frame_rgb)
+            cam.send(frame_resized)
             cam.sleep_until_next_frame()
             logging.debug("Frame sent to virtual camera.")
             
