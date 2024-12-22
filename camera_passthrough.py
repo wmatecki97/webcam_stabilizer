@@ -19,30 +19,38 @@ def main():
 
     # Create a virtual camera
     try:
-        with pyvirtualcam.Camera(width=frame_width, height=frame_height, fps=fps) as cam:
-            print(f"Virtual camera started: {cam.device}")
-            while True:
-                # Read a frame from the camera
-                ret, frame = cap.read()
-                if not ret:
-                    break
+        # Initialize with dummy values, will be updated after first frame
+        cam = None
+        while True:
+            # Read a frame from the camera
+            ret, frame = cap.read()
+            if not ret:
+                break
 
-                # Process the frame
-                frame_rgb = process_frame(frame)
+            # Process the frame
+            frame_rgb, cropped_width, cropped_height = process_frame(frame)
 
-                # Send the frame to the virtual camera
-                cam.send(frame_rgb)
-                cam.sleep_until_next_frame()
+            # Initialize the virtual camera with the correct dimensions
+            if cam is None:
+                cam = pyvirtualcam.Camera(width=cropped_width, height=cropped_height, fps=fps)
+                print(f"Virtual camera started: {cam.device}")
 
-                # Break the loop if 'q' is pressed
-                if cv2.waitKey(1) & 0xFF == ord('q'):
-                    break
+            # Send the frame to the virtual camera
+            cam.send(frame_rgb)
+            cam.sleep_until_next_frame()
+
+            # Break the loop if 'q' is pressed
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
-
-    # Release the camera and destroy all windows
-    cap.release()
-    cv2.destroyAllWindows()
+    finally:
+        # Release the camera and destroy all windows
+        if cap:
+            cap.release()
+        if cam:
+            cam.close()
+        cv2.destroyAllWindows()
 
 if __name__ == "__main__":
     main()

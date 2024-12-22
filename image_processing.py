@@ -9,7 +9,10 @@ def process_frame(frame):
         frame: A BGR frame from OpenCV.
 
     Returns:
-        A cropped RGB frame.
+        A tuple containing:
+          - A cropped RGB frame.
+          - The width of the cropped frame.
+          - The height of the cropped frame.
     """
     height, width = frame.shape[:2]
     
@@ -22,4 +25,4 @@ def process_frame(frame):
 
     # Convert the frame to RGB
     frame_rgb = cv2.cvtColor(cropped_frame, cv2.COLOR_BGR2RGB)
-    return frame_rgb
+    return frame_rgb, cropped_frame.shape[1], cropped_frame.shape[0]
