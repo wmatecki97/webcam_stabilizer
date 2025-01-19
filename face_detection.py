@@ -39,14 +39,6 @@ class FaceAligner:
 
         if self.first_frame_processed:
             if self.first_left_eye_center is not None and left_eye_center is not None:
-                
-                if self.prev_left_eye_center is not None:
-                    distance = np.sqrt((left_eye_center[0] - self.prev_left_eye_center[0])**2 + (left_eye_center[1] - self.prev_left_eye_center[1])**2)
-                    if distance > self.max_eye_movement_threshold:
-                        logging.warning(f"Eye movement distance {distance:.2f} exceeds threshold {self.max_eye_movement_threshold}. Ignoring frame.")
-                        if self.prev_aligned_frame is not None:
-                            aligned_frame = self.prev_aligned_frame
-                        return aligned_frame, frame.shape[1], frame.shape[0]
 
                 # Calculate the translation vector
                 tx = self.first_left_eye_center[0] - left_eye_center[0]
@@ -70,3 +62,4 @@ class FaceAligner:
         self.prev_left_eye_center = left_eye_center
         self.prev_aligned_frame = aligned_frame
         return aligned_frame, frame.shape[1], frame.shape[0]
+
