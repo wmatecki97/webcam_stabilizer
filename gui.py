@@ -48,20 +48,21 @@ class App(customtkinter.CTk):
 
         # Horizontal Alignment
         self.horizontal_label = customtkinter.CTkLabel(self, text="Horizontal Alignment:")
-        self.horizontal_label.grid(row=3, column=0, padx=10, pady=10, sticky="w")
-        self.horizontal_slider = customtkinter.CTkSlider(self, from_=0, to=100, width=200)
-        self.horizontal_slider.grid(row=3, column=1, padx=10, pady=10, sticky="w")
-        self.horizontal_slider.set(self.config.get("horizontal", 50))
+        self.horizontal_label.grid(row=3, column=0, padx=1, pady=10, sticky="w")
         self.horizontal_left_label = customtkinter.CTkLabel(self, text="Left")
-        self.horizontal_left_label.grid(row=3, column=2, padx=5, pady=10, sticky="e")
+        self.horizontal_left_label.grid(row=3, column=1, padx=5, pady=10, sticky="e")
+        self.horizontal_slider = customtkinter.CTkSlider(self, from_=0, to=100, width=200)
+        self.horizontal_slider.grid(row=3, column=2, padx=10, pady=10, sticky="w")
+        self.horizontal_slider.set(self.config.get("horizontal", 50))
+
         self.horizontal_right_label = customtkinter.CTkLabel(self, text="Right")
         self.horizontal_right_label.grid(row=3, column=3, padx=5, pady=10, sticky="w")
 
         # Vertical Alignment
         self.vertical_label = customtkinter.CTkLabel(self, text="Vertical Alignment:")
-        self.vertical_label.grid(row=4, column=0, padx=10, pady=10, sticky="w")
+        self.vertical_label.grid(row=4, column=0, padx=2, pady=10, sticky="w")
         self.vertical_slider = customtkinter.CTkSlider(self, from_=0, to=100, width=200)
-        self.vertical_slider.grid(row=4, column=1, padx=10, pady=10, sticky="w")
+        self.vertical_slider.grid(row=4, column=1, padx=2, pady=10, sticky="w")
         self.vertical_slider.set(self.config.get("vertical", 50))
         self.vertical_up_label = customtkinter.CTkLabel(self, text="Up")
         self.vertical_up_label.grid(row=4, column=2, padx=5, pady=10, sticky="e")
