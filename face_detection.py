@@ -1,27 +1,27 @@
 import cv2
 import numpy as np
 import logging
+from cvzone.FaceMeshModule import FaceMeshDetector
 
 class FaceAligner:
     def __init__(self, max_eye_movement_threshold=100, logging_level=logging.DEBUG):
-        self.face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-        self.eye_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xml')
+        self.fm = FaceMeshDetector(maxFaces=1)
         self.first_left_eye_center = None
         self.prev_aligned_frame = None
         self.first_frame_processed = False
         self.prev_translation_matrix = None
         self.max_eye_movement_threshold = max_eye_movement_threshold
         self.prev_left_eye_center = None
+        self.left_eye_indices = [130,247,30,29,27,28,56,190,243,112,26,22,23,24,110,25]
         
         logging.basicConfig(level=logging_level, format='%(asctime)s - %(levelname)s - %(message)s')
         logging.info("FaceAligner initialized.")
 
     def detect_and_align(self, frame):
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        faces = self.face_cascade.detectMultiScale(gray, 1.1, 4)
-        
+        frame, faces = self.fm.findFaceMesh(frame, draw=False)
         aligned_frame = frame
-        if len(faces) == 0:
+        
+        if not faces:
             logging.debug("No faces detected.")
             if self.prev_translation_matrix is not None:
                 # Apply previous translation if available
@@ -32,26 +32,10 @@ class FaceAligner:
             return aligned_frame, frame.shape[1], frame.shape[0]
 
         logging.debug(f"Detected {len(faces)} faces.")
-        x, y, w, h = faces[0]
-        face_roi_gray = gray[y:y+h, x:x+w]
-        face_roi_color = frame[y:y+h, x:x+w]
-        eyes = self.eye_cascade.detectMultiScale(face_roi_gray)
-
-        left_eye_center = None
-        if len(eyes) >= 2:
-            logging.debug(f"Detected {len(eyes)} eyes.")
-            # Assuming the first two eyes are left and right
-            eye1_x, eye1_y, eye1_w, eye1_h = eyes[0]
-            eye2_x, eye2_y, eye2_w, eye2_h = eyes[1]
-
-            # Determine which eye is on the left
-            if eye1_x < eye2_x:
-                left_eye_x, left_eye_y, left_eye_w, left_eye_h = eye1_x, eye1_y, eye1_w, eye1_h
-            else:
-                left_eye_x, left_eye_y, left_eye_w, left_eye_h = eye2_x, eye2_y, eye2_w, eye2_h
-            
-            left_eye_center = (x + left_eye_x + left_eye_w // 2, y + left_eye_y + left_eye_h // 2)
-            logging.debug(f"Left eye center: {left_eye_center}")
+        face = faces[0]
+        left_eye_points = np.array([face[index] for index in self.left_eye_indices])
+        left_eye_center = np.mean(left_eye_points[:,:2], axis=0, dtype=np.int32)
+        logging.debug(f"Left eye center: {left_eye_center}")
 
         if self.first_frame_processed:
             if self.first_left_eye_center is not None and left_eye_center is not None:
