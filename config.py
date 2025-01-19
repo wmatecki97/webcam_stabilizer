@@ -11,3 +11,5 @@ class Config:
         self.max_eye_movement_threshold = 30
         self.logging_level = logging.ERROR
         self.log_format = '%(asctime)s - %(levelname)s - %(message)s'
+        self.horizontal = 50
+        self.vertical = 50
