@@ -3,6 +3,7 @@ import json
 import logging
 import cv2
 import threading
+import os
 from camera_passthrough import run_camera
 
 class App(customtkinter.CTk):
@@ -11,6 +12,14 @@ class App(customtkinter.CTk):
 
         self.title("Camera Config App")
         self.geometry("600x400")
+
+        # Set the icon
+        icon_path = os.path.join(os.path.dirname(__file__), "icon.ico")
+        if os.path.exists(icon_path):
+            self.iconbitmap(icon_path)
+        else:
+            logging.warning(f"Icon file not found at: {icon_path}")
+
 
         self.config = self.load_config()
         self.camera_running = threading.Event()
