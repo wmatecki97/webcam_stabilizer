@@ -53,9 +53,9 @@ class App(customtkinter.CTk):
         self.horizontal_slider.grid(row=3, column=1, padx=10, pady=10, sticky="w")
         self.horizontal_slider.set(self.config.get("horizontal", 50))
         self.horizontal_left_label = customtkinter.CTkLabel(self, text="Left")
-        self.horizontal_left_label.grid(row=3, column=2, padx=5, pady=10, sticky="w")
+        self.horizontal_left_label.grid(row=3, column=2, padx=5, pady=10, sticky="e")
         self.horizontal_right_label = customtkinter.CTkLabel(self, text="Right")
-        self.horizontal_right_label.grid(row=3, column=3, padx=5, pady=10, sticky="e")
+        self.horizontal_right_label.grid(row=3, column=3, padx=5, pady=10, sticky="w")
 
         # Vertical Alignment
         self.vertical_label = customtkinter.CTkLabel(self, text="Vertical Alignment:")
@@ -64,9 +64,9 @@ class App(customtkinter.CTk):
         self.vertical_slider.grid(row=4, column=1, padx=10, pady=10, sticky="w")
         self.vertical_slider.set(self.config.get("vertical", 50))
         self.vertical_up_label = customtkinter.CTkLabel(self, text="Up")
-        self.vertical_up_label.grid(row=4, column=2, padx=5, pady=10, sticky="w")
+        self.vertical_up_label.grid(row=4, column=2, padx=5, pady=10, sticky="e")
         self.vertical_down_label = customtkinter.CTkLabel(self, text="Down")
-        self.vertical_down_label.grid(row=4, column=3, padx=5, pady=10, sticky="e")
+        self.vertical_down_label.grid(row=4, column=3, padx=5, pady=10, sticky="w")
 
         # Start Button
         self.start_button = customtkinter.CTkButton(self, text="Start Camera", command=self.start_camera)
