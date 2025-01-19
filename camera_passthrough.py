@@ -27,10 +27,8 @@ def run_camera(config):
 
     logging.info(f"Camera opened with dimensions: {frame_width}x{frame_height} and fps: {fps}")
 
-    # Anomaly detection configuration
-    max_eye_movement_threshold = config.max_eye_movement_threshold
 
-    face_aligner = FaceAligner(max_eye_movement_threshold=max_eye_movement_threshold, logging_level=config.logging_level)
+    face_aligner = FaceAligner(config = config)
     
     # Fixed output dimensions
     output_width = config.output_width

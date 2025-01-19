@@ -3,20 +3,20 @@ import numpy as np
 import logging
 from cvzone.FaceMeshModule import FaceMeshDetector
 
+from config import Config
+
 class FaceAligner:
-    def __init__(self, max_eye_movement_threshold=100, logging_level=logging.DEBUG, horizontal=50, vertical=50):
+    def __init__(self, config: Config):
         self.fm = FaceMeshDetector(maxFaces=1)
         self.first_left_eye_center = None
         self.prev_aligned_frame = None
         self.first_frame_processed = False
         self.prev_translation_matrix = None
-        self.max_eye_movement_threshold = max_eye_movement_threshold
         self.prev_left_eye_center = None
         self.left_eye_indices = [130,247,30,29,27,28,56,190,243,112,26,22,23,24,110,25]
-        self.horizontal = horizontal
-        self.vertical = vertical
-        
-        logging.basicConfig(level=logging_level, format='%(asctime)s - %(levelname)s - %(message)s')
+        self.config = config
+
+        logging.basicConfig(level=config.logging_level, format='%(asctime)s - %(levelname)s - %(message)s')
         logging.info("FaceAligner initialized.")
 
     def detect_and_align(self, frame):
@@ -40,8 +40,8 @@ class FaceAligner:
         logging.debug(f"Left eye center: {left_eye_center}")
 
         # Calculate the target eye position based on config values
-        target_x = int(frame.shape[1] * (self.horizontal / 100))
-        target_y = int(frame.shape[0] * (self.vertical / 100))
+        target_x = int(frame.shape[1] * (self.config.horizontal / 100))
+        target_y = int(frame.shape[0] * (self.config.vertical / 100))
         target_eye_center = np.array([target_x, target_y])
 
         if self.first_frame_processed:
