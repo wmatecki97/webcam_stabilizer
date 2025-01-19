@@ -13,7 +13,7 @@ class App(customtkinter.CTk):
         self.geometry("600x400")
 
         self.config = self.load_config()
-        self.camera_running = False
+        self.camera_running = threading.Event()
         self.camera_thread = None
 
         # Camera Index
@@ -81,40 +81,46 @@ class App(customtkinter.CTk):
         return config
 
     def start_camera(self):
-        if not self.camera_running:
-            self.camera_running = True
+        if not self.camera_running.is_set():
+            self.camera_running.set()
             self.start_button.configure(state="disabled")
             self.stop_button.configure(state="normal")
-            config = self.save_config()
-            self.camera_thread = threading.Thread(target=self.run_camera_thread, args=(config,))
+            
+            # Update config with current values from GUI
+            self.config["camera_index"] = int(self.camera_index_entry.get())
+            self.config["output_width"] = int(self.output_width_entry.get())
+            self.config["output_height"] = int(self.output_height_entry.get())
+            self.config["horizontal"] = int(self.horizontal_slider.get())
+            self.config["vertical"] = int(self.vertical_slider.get())
+            self.save_config()
+
+            from config import Config
+            config_obj = Config()
+            config_obj.camera_index = self.config["camera_index"]
+            config_obj.output_width = self.config["output_width"]
+            config_obj.output_height = self.config["output_height"]
+            config_obj.horizontal = self.config["horizontal"]
+            config_obj.vertical = self.config["vertical"]
+
+            self.camera_thread = threading.Thread(target=self.run_camera_thread, args=(config_obj,))
             self.camera_thread.start()
 
     def run_camera_thread(self, config):
-        class Config:
-            def __init__(self, config_dict):
-                self.camera_index = config_dict.get("camera_index", 0)
-                self.camera_api = cv2.CAP_DSHOW
-                self.output_width = config_dict.get("output_width", 1280)
-                self.output_height = config_dict.get("output_height", 720)
-                self.max_fps = 30
-                self.logging_level = logging.ERROR
-                self.log_format = '%(asctime)s - %(levelname)s - %(message)s'
-                self.horizontal = config_dict.get("horizontal", 50)
-                self.vertical = config_dict.get("vertical", 50)
-        run_camera(Config(config))
-        self.camera_running = False
+        run_camera(config, self.camera_running)
+        self.camera_running.clear()
         self.start_button.configure(state="normal")
         self.stop_button.configure(state="disabled")
 
     def stop_camera(self):
-        if self.camera_running:
-            self.camera_running = False
-            # No need to explicitly stop the thread, it will exit when camera_running is False
+        if self.camera_running.is_set():
+            self.camera_running.clear()
             self.start_button.configure(state="normal")
             self.stop_button.configure(state="disabled")
 
     def on_closing(self):
         self.stop_camera()
+        if self.camera_thread and self.camera_thread.is_alive():
+            self.camera_thread.join()
         self.destroy()
 
 if __name__ == "__main__":

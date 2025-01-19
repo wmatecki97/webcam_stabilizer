@@ -7,7 +7,7 @@ import logging
 import time
 import os
 
-def run_camera(config):
+def run_camera(config, camera_running):
     # Open the default camera
     cap = cv2.VideoCapture(config.camera_index, config.camera_api)
     if not cap.isOpened():
@@ -41,7 +41,7 @@ def run_camera(config):
     frame_count = 0
     start_time = time.time()
     try:
-        while True:
+        while camera_running.is_set():
             frame_start_time = time.time()
             # Read a frame from the camera
             ret, frame = cap.read()
