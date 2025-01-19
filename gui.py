@@ -48,7 +48,7 @@ class App(customtkinter.CTk):
 
         # Horizontal Alignment
         self.horizontal_label = customtkinter.CTkLabel(self, text="Horizontal Alignment:")
-        self.horizontal_label.grid(row=3, column=0, padx=1, pady=10, sticky="w")
+        self.horizontal_label.grid(row=3, column=0, padx=10, pady=10, sticky="w")
         self.horizontal_left_label = customtkinter.CTkLabel(self, text="Left")
         self.horizontal_left_label.grid(row=3, column=1, padx=5, pady=10, sticky="e")
         self.horizontal_slider = customtkinter.CTkSlider(self, from_=0, to=100, width=200)
