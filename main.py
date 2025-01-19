@@ -1,12 +1,11 @@
-import logging
-import cv2
-from config import Config
-from camera_passthrough import run_camera
+from gui import App
+import customtkinter
 
 def main():
-    config = Config()
-    logging.basicConfig(level=config.logging_level, format=config.log_format)
-    run_camera(config)
+    customtkinter.set_appearance_mode("System")
+    customtkinter.set_default_color_theme("blue")
+    app = App()
+    app.mainloop()
 
 if __name__ == "__main__":
     main()
