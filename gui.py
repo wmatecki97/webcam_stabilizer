@@ -26,56 +26,65 @@ class App(customtkinter.CTk):
         self.camera_thread = None
 
         # Camera Index
-        self.camera_index_label = customtkinter.CTkLabel(self, text="Camera Index:")
-        self.camera_index_label.grid(row=0, column=0, padx=10, pady=10, sticky="w")
-        self.camera_index_entry = customtkinter.CTkEntry(self, width=50)
-        self.camera_index_entry.grid(row=0, column=1, padx=10, pady=10, sticky="w")
+        self.camera_index_frame = customtkinter.CTkFrame(self)
+        self.camera_index_frame.pack(padx=10, pady=10, fill="x")
+        self.camera_index_label = customtkinter.CTkLabel(self.camera_index_frame, text="Camera Index:")
+        self.camera_index_label.pack(side="left", padx=10)
+        self.camera_index_entry = customtkinter.CTkEntry(self.camera_index_frame, width=50)
+        self.camera_index_entry.pack(side="left", padx=10)
         self.camera_index_entry.insert(0, str(self.config.get("camera_index", 0)))
 
         # Output Width
-        self.output_width_label = customtkinter.CTkLabel(self, text="Output Width:")
-        self.output_width_label.grid(row=1, column=0, padx=10, pady=10, sticky="w")
-        self.output_width_entry = customtkinter.CTkEntry(self, width=50)
-        self.output_width_entry.grid(row=1, column=1, padx=10, pady=10, sticky="w")
+        self.output_width_frame = customtkinter.CTkFrame(self)
+        self.output_width_frame.pack(padx=10, pady=10, fill="x")
+        self.output_width_label = customtkinter.CTkLabel(self.output_width_frame, text="Output Width:")
+        self.output_width_label.pack(side="left", padx=10)
+        self.output_width_entry = customtkinter.CTkEntry(self.output_width_frame, width=50)
+        self.output_width_entry.pack(side="left", padx=10)
         self.output_width_entry.insert(0, str(self.config.get("output_width", 1280)))
 
         # Output Height
-        self.output_height_label = customtkinter.CTkLabel(self, text="Output Height:")
-        self.output_height_label.grid(row=2, column=0, padx=10, pady=10, sticky="w")
-        self.output_height_entry = customtkinter.CTkEntry(self, width=50)
-        self.output_height_entry.grid(row=2, column=1, padx=10, pady=10, sticky="w")
+        self.output_height_frame = customtkinter.CTkFrame(self)
+        self.output_height_frame.pack(padx=10, pady=10, fill="x")
+        self.output_height_label = customtkinter.CTkLabel(self.output_height_frame, text="Output Height:")
+        self.output_height_label.pack(side="left", padx=10)
+        self.output_height_entry = customtkinter.CTkEntry(self.output_height_frame, width=50)
+        self.output_height_entry.pack(side="left", padx=10)
         self.output_height_entry.insert(0, str(self.config.get("output_height", 720)))
 
         # Horizontal Alignment
-        self.horizontal_label = customtkinter.CTkLabel(self, text="Horizontal Alignment:")
-        self.horizontal_label.grid(row=3, column=0, padx=2, pady=10)
-        self.horizontal_left_label = customtkinter.CTkLabel(self, text="Left")
-        self.horizontal_left_label.grid(row=3, column=1, padx=2, pady=10)
-        self.horizontal_slider = customtkinter.CTkSlider(self, from_=0, to=100, width=200)
-        self.horizontal_slider.grid(row=3, column=2, padx=2, pady=10, sticky="w")
+        self.horizontal_frame = customtkinter.CTkFrame(self)
+        self.horizontal_frame.pack(padx=10, pady=10, fill="x")
+        self.horizontal_label = customtkinter.CTkLabel(self.horizontal_frame, text="Horizontal Alignment:")
+        self.horizontal_label.pack(side="left", padx=2)
+        self.horizontal_left_label = customtkinter.CTkLabel(self.horizontal_frame, text="Left")
+        self.horizontal_left_label.pack(side="left", padx=2)
+        self.horizontal_slider = customtkinter.CTkSlider(self.horizontal_frame, from_=0, to=100, width=200)
+        self.horizontal_slider.pack(side="left", padx=2)
         self.horizontal_slider.set(self.config.get("horizontal", 50))
-
-        self.horizontal_right_label = customtkinter.CTkLabel(self, text="Right")
-        self.horizontal_right_label.grid(row=3, column=3, padx=2, pady=10, sticky="w")
+        self.horizontal_right_label = customtkinter.CTkLabel(self.horizontal_frame, text="Right")
+        self.horizontal_right_label.pack(side="left", padx=2)
 
         # Vertical Alignment
-        self.vertical_label = customtkinter.CTkLabel(self, text="Vertical Alignment:")
-        self.vertical_label.grid(row=4, column=0, padx=2, pady=10, sticky="w")
-        self.vertical_slider = customtkinter.CTkSlider(self, from_=0, to=100, width=200)
-        self.vertical_slider.grid(row=4, column=1, padx=2, pady=10, sticky="w")
+        self.vertical_frame = customtkinter.CTkFrame(self)
+        self.vertical_frame.pack(padx=10, pady=10, fill="x")
+        self.vertical_label = customtkinter.CTkLabel(self.vertical_frame, text="Vertical Alignment:")
+        self.vertical_label.pack(side="left", padx=2)
+        self.vertical_slider = customtkinter.CTkSlider(self.vertical_frame, from_=0, to=100, width=200)
+        self.vertical_slider.pack(side="left", padx=2)
         self.vertical_slider.set(self.config.get("vertical", 50))
-        self.vertical_up_label = customtkinter.CTkLabel(self, text="Up")
-        self.vertical_up_label.grid(row=4, column=2, padx=5, pady=10, sticky="e")
-        self.vertical_down_label = customtkinter.CTkLabel(self, text="Down")
-        self.vertical_down_label.grid(row=4, column=3, padx=5, pady=10, sticky="w")
+        self.vertical_up_label = customtkinter.CTkLabel(self.vertical_frame, text="Up")
+        self.vertical_up_label.pack(side="left", padx=5)
+        self.vertical_down_label = customtkinter.CTkLabel(self.vertical_frame, text="Down")
+        self.vertical_down_label.pack(side="left", padx=5)
 
         # Start Button
         self.start_button = customtkinter.CTkButton(self, text="Start Camera", command=self.start_camera)
-        self.start_button.grid(row=5, column=0, columnspan=2, padx=10, pady=20)
+        self.start_button.pack(padx=10, pady=20, fill="x")
 
         # Stop Button
         self.stop_button = customtkinter.CTkButton(self, text="Stop Camera", command=self.stop_camera, state="disabled")
-        self.stop_button.grid(row=6, column=0, columnspan=2, padx=10, pady=10)
+        self.stop_button.pack(padx=10, pady=10, fill="x")
 
         self.protocol("WM_DELETE_WINDOW", self.on_closing)
 
